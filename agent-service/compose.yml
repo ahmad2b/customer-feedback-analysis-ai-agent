@@ -1,0 +1,15 @@
+version: "0.1.0"
+name: agent-service-text-analysis-pipline
+services:
+  agent-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+
+volumes:
+  agent-service:
+    driver: local
