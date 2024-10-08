@@ -5,10 +5,12 @@ import { Toaster } from "sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-	metadataBase: new URL("https://devraftel.com"),
-	title: "Intelligent Customer Support Agent",
+	metadataBase: new URL(
+		"https://github.com/ahmad2b/customer-feedback-analysis-ai-agent.git"
+	),
+	title: "Customer Feedback Analysis AI Agent",
 	description:
-		"A customer support AI Agent for an airline to help users research and make travel arrangements.",
+		"Customer Feedback Analysis AI Agent for reducing staff hours, boosting efficiency, faster response times, improved retention, actionable insights for product and strategy, and testing system with a data subset to see results fast.",
 };
 
 export default function RootLayout({

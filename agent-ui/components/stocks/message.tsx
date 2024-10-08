@@ -8,6 +8,7 @@ import { IconUser } from "@/components/ui/icons";
 import { useStreamableText } from "@/lib/hooks/use-streamable-text";
 import { cn } from "@/lib/utils";
 import { StreamableValue } from "ai/rsc";
+import { BotIcon } from "lucide-react";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import { MemoizedReactMarkdown } from "../markdown";
@@ -40,11 +41,7 @@ export function BotMessage({
 	return (
 		<div className={cn("group relative flex items-start md:-ml-12", className)}>
 			<div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
-				<img
-					className="size-6"
-					src="/images/gemini.png"
-					alt="gemini logo"
-				/>
+				<BotIcon className="size-6 p-0.5" />
 			</div>
 			<div className="ml-4 flex-1 space-y-2 overflow-hidden px-1">
 				<MemoizedReactMarkdown
@@ -111,11 +108,7 @@ export function BotCard({
 					!showAvatar && "invisible"
 				)}
 			>
-				<img
-					className="size-6"
-					src="/images/gemini.png"
-					alt="gemini logo"
-				/>
+				<BotIcon className="size-6 p-0.5" />
 			</div>
 			<div className="ml-4 flex-1 pl-2">{children}</div>
 		</div>
@@ -138,11 +131,7 @@ export function SpinnerMessage() {
 	return (
 		<div className="group relative flex items-start md:-ml-12">
 			<div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
-				<img
-					className="size-6"
-					src="/images/gemini.png"
-					alt="gemini logo"
-				/>
+				<BotIcon className="size-6 p-0.5" />
 			</div>
 			<div className="ml-4 h-[24px] flex flex-row items-center flex-1 space-y-2 overflow-hidden px-1">
 				{spinner}
