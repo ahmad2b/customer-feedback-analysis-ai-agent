@@ -9,7 +9,7 @@ export interface ChatList {
 
 export function ChatList({ messages, session, isShared }: ChatList) {
 	return messages.length ? (
-		<div className="relative mx-auto max-w-2xl grid auto-rows-max gap-8 px-4 text-neutral-950">
+		<div className="relative mx-auto max-w-5xl grid auto-rows-max gap-8 px-4 text-neutral-950">
 			{messages.map((message) => {
 				return (
 					<div key={message.id}>

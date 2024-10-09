@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import { PlusCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
-import { SidebarToggle } from "./sidebar-toggle";
 
 export async function SidebarDesktop() {
 	// const { userId } = auth();
@@ -17,22 +16,21 @@ export async function SidebarDesktop() {
 
 	return (
 		<Sidebar className="peer absolute inset-y-0 z-30 hidden -translate-x-full  bg-transparent duration-300 ease-in-out data-[state=open]:translate-x-0 lg:flex lg:w-[250px] data-[state=open]:m-2 rounded-xl">
-			<div className="bg-white shadow h-full rounded-xl border flex flex-col space-y-2">
+			<div className="bg-[#f4f4f8] shadow-[#9ba5b7] shadow-md h-full rounded-xl border flex flex-col space-y-2">
 				<div className="p-2">
-					<div className="flex items-center justify-between">
+					<div className="flex  items-center justify-center">
 						<Link
 							href={"/"}
-							className="font-bold font-sans text-xl"
+							className="font-bold font-sans text-xl text-[#323E59]"
 						>
 							AI Agent
 						</Link>
-						<SidebarToggle />
 					</div>
 				</div>
 				<Separator />
-				<div className="p-2">
+				<div className="p-2 flex flex-col w-full space-y-4">
 					<Link
-						href={"/"}
+						href={"/n"}
 						className={cn(
 							"",
 							buttonVariants({
@@ -42,7 +40,7 @@ export async function SidebarDesktop() {
 						)}
 					>
 						<PlusCircleIcon className="mr-2 size-5" />
-						New Chat
+						New Thread
 					</Link>
 				</div>
 			</div>

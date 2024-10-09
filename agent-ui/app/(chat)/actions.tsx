@@ -1,26 +1,26 @@
-import { AgentMessage } from "@/components/agent-message";
 import { FeedbackAgentMessage } from "@/components/feedback-agent-msg";
-import { FlightData } from "@/components/flight/flight-info-card";
 import { BotCard, SpinnerMessage } from "@/components/stocks/message";
-import { FeedbackAnalysis } from "@/lib/types";
+import { FeedbackAnalysis, FeedbackAnalytics } from "@/lib/types";
 import { generateId } from "ai";
 import { createAI, createStreamableUI, getMutableAIState } from "ai/rsc";
 import { RemoteRunnable } from "langchain/runnables/remote";
 import { ReactNode } from "react";
 
-const analyzeFeedback = async (feedback: string) => {
+const analyzeFeedback = async (feedback: string): Promise<UIState> => {
 	"use server";
 
 	console.log("Analyzing feedback:", feedback);
 
 	const aiState = getMutableAIState();
 
+	const messageId = generateId();
+
 	aiState.update({
 		...aiState.get(),
 		messages: [
 			...aiState.get().messages,
 			{
-				id: generateId(),
+				id: messageId,
 				role: "human",
 				content: feedback,
 			},
@@ -45,6 +45,13 @@ const analyzeFeedback = async (feedback: string) => {
 		database_updated: false,
 		trend_analysis: "",
 		management_dashboard: "",
+		analysis_summary: {
+			last_updated: "",
+			sentiment_distribution: {},
+			top_categories: {},
+			top_trends: {},
+			total_feedback_processed: 0,
+		},
 	} satisfies FeedbackAnalysis;
 	let sentiment;
 
@@ -71,6 +78,7 @@ const analyzeFeedback = async (feedback: string) => {
 				database_updated: false,
 				trend_analysis: "",
 				management_dashboard: "",
+				analysis_summary: {},
 			},
 			{
 				version: "v2",
@@ -127,145 +135,49 @@ const analyzeFeedback = async (feedback: string) => {
 
 						uiStream.update(
 							<BotCard>
-								<FeedbackAgentMessage
-									agentMessage={streamResult}
-									feedbackAnalysis={feedbackAnalysis}
-								/>
+								<div className="flex ">
+									<FeedbackAgentMessage
+										agentMessage={streamResult}
+										feedbackAnalysis={feedbackAnalysis}
+									/>
+									{/* <FeedbackAnalyticsDashboard
+										data={feedbackAnalysis.analysis_summary}
+									/> */}
+								</div>
 							</BotCard>
 						);
+						spinnerStream.done(null);
+						uiStream.done();
+						aiState.update({
+							...aiState.get(),
+							messages: [
+								...aiState.get().messages,
+								{
+									id: generateId(),
+									role: "ai",
+									content: feedback,
+									display: uiStream.value,
+									spinner: spinnerStream.value,
+									analysis_summary: feedbackAnalysis.analysis_summary,
+								},
+							],
+						});
 					}
 				}
 			}
 		} catch (error) {
 			console.error("Error processing stream:", error);
 		}
-	})()
-		.catch((error) => {
-			console.error("Error in async function:", error);
-		})
-		.finally(() => {
-			spinnerStream.update(null);
-			uiStream.done();
-		});
-
-	return {
-		id: generateId(),
-		role: "ai",
-		content: feedback,
-		display: uiStream.value,
-		spinner: spinnerStream.value,
-		sentiment: sentiment,
-	};
-};
-
-const sendMessage = async (message: string) => {
-	"use server";
-
-	console.log("Sending message:", message);
-
-	const aiState = getMutableAIState();
-
-	aiState.update({
-		...aiState.get(),
-		messages: [
-			...aiState.get().messages,
-			{
-				id: generateId(),
-				role: "human",
-				content: message,
-			},
-		],
+	})().catch((error) => {
+		console.error("Error in async function:", error);
 	});
 
-	console.log("AI state:", aiState.get());
-
-	const uiStream = createStreamableUI("");
-	const spinnerStream = createStreamableUI(<SpinnerMessage />);
-
-	let streamResult = "";
-	let flightData: FlightData[] = [];
-
-	(async () => {
-		spinnerStream.update(<SpinnerMessage />);
-
-		const remoteChain = new RemoteRunnable({
-			url: "http://localhost:8000/agent",
-			options: {
-				timeout: 60000,
-			},
-		});
-
-		const formatedMessages = [{ type: "human", content: message }];
-
-		const stream = remoteChain.streamEvents(
-			{
-				messages: formatedMessages,
-				user_info: "user",
-			},
-			{
-				version: "v1",
-				configurable: {
-					checkpoint_id: "string",
-					checkpoint_ns: "string",
-					thread_id: "1",
-					passenger_id: "3442 587242",
-				},
-			}
-		);
-
-		try {
-			for await (const event of stream) {
-				const eventType = event.event;
-				const eventName = event.name;
-
-				console.log("Event type:", eventType);
-				console.log("Event name:", eventName);
-
-				if (eventType === "on_chat_model_stream") {
-					if (event.name === "ChatOpenAI") {
-						const data = event.data;
-						streamResult += data.chunk["content"];
-						console.log("ChatOpenAI Stream data:", data);
-						uiStream.update(
-							<AgentMessage
-								agentMessage={streamResult}
-								flightData={flightData}
-							/>
-						);
-					}
-				}
-
-				if (eventType === "on_tool_end") {
-					if (eventName === "fetch_user_flight_information") {
-						const data = event.data.output;
-						console.log("fetch_user_flight_information Tool end data:", data);
-						flightData = data;
-						// uiStream.update(
-						// 	<AgentMessage
-						// 		agentMessage={streamResult}
-						// 		flightData={flightData}
-						// 	/>
-						// );
-					}
-				}
-			}
-		} catch (error) {
-			console.error("Error processing stream:", error);
-		}
-	})()
-		.catch((error) => {
-			console.error("Error in async function:", error);
-		})
-		.finally(() => {
-			spinnerStream.update(null);
-			uiStream.done();
-		});
-
 	return {
-		id: generateId(),
+		id: messageId,
 		role: "ai",
 		display: uiStream.value,
 		spinner: spinnerStream.value,
+		analysis_summary: feedbackAnalysis.analysis_summary,
 	};
 };
 
@@ -280,6 +192,7 @@ export type Message = {
 		name: string;
 		props: Record<string, any>;
 	};
+	analysis_summary?: AnalysisSummary;
 };
 
 export type AIState = {
@@ -287,22 +200,40 @@ export type AIState = {
 	messages: Array<Message>;
 };
 
+type AnalysisSummary = {
+	sentiment_distribution: {
+		Positive: number;
+		Negative: number;
+		Neutral: number;
+		[key: string]: number; // In case there are additional sentiments like "Neutral" or others
+	};
+	top_categories: {
+		Praise: number;
+		Complaint: number;
+		[key: string]: number; // To accommodate any other categories that may be added
+	};
+	top_trends: {
+		[key: string]: number; // The key can be any string, and it maps to a number
+	};
+	total_feedback_processed: number;
+	last_updated: string; // This represents the ISO timestamp as a string
+};
+
 export type UIState = {
 	id: string;
 	role: Role;
-	sentiment?: string;
 	display: ReactNode;
 	spinner?: ReactNode;
-}[];
+	analysis_summary: FeedbackAnalytics;
+};
 
-export const AI = createAI<AIState, UIState>({
+export const AI = createAI<AIState, UIState[]>({
 	initialAIState: {
 		chatId: generateId(),
 		messages: [],
 	},
 	initialUIState: [],
 	actions: {
-		sendMessage,
 		analyzeFeedback,
 	},
 	onSetAIState: async ({ state, done }) => {

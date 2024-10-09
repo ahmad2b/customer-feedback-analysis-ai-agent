@@ -1,5 +1,6 @@
 import logging
 import random
+import os
 from typing import TypedDict
 from dotenv import load_dotenv
 from datetime import datetime
@@ -8,8 +9,13 @@ from langgraph.graph import StateGraph, END, START
 from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage
+from psycopg_pool import ConnectionPool
+from langgraph.checkpoint.postgres import PostgresSaver
 
 load_dotenv()
+
+DB_URI=os.getenv("DB_URI")
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -26,6 +32,10 @@ class FeedbackState(TypedDict):
     database_updated: bool
     trend_analysis: str
     management_dashboard: str
+    analysis_summary: dict
+    
+# Initialize database connection pool
+db_pool = ConnectionPool(DB_URI)
     
 llm = ChatOpenAI(
     model="gpt-4o-mini",
@@ -45,7 +55,6 @@ def categorization_node(state: FeedbackState):
     logging.info(f"Feedback categorized as: {category}")
     return {"category": category}
 
-
 def entity_extraction_node(state: FeedbackState):
     ''' Extract relevant entities (Product, Store Location, Employee Name) from the feedback '''
     logging.info("Extracting entities from the feedback")
@@ -57,7 +66,6 @@ def entity_extraction_node(state: FeedbackState):
     entities = llm.invoke([message]).content.strip().split(", ")
     logging.info(f"Entities extracted: {entities}")
     return {"entities": entities}
-
 
 def summarization_node(state: FeedbackState):
     ''' Summarize the feedback in one concise sentence '''
@@ -162,8 +170,23 @@ def faq_update_action(state: FeedbackState):
 def update_database(state: FeedbackState):
     logging.info("Updating database with feedback analysis results")
     # Simulating database update
-    for key, value in state.items():
-        logging.info(f"  {key}: {value}")
+    with db_pool.connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO feedback_analysis 
+                (feedback, category, entities, summary, sentiment, priority, route, action_items, trend_analysis)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                state["feedback"],
+                state["category"],
+                ", ".join(state["entities"]),
+                state["summary"],
+                state["sentiment"],
+                state["priority"],
+                state["route"],
+                ", ".join(state["action_items"]),
+                state["trend_analysis"]
+            ))
     return {"database_updated": True}
 
 def trend_analysis(state: FeedbackState):
@@ -185,6 +208,49 @@ def update_management_dashboard(state: FeedbackState):
     logging.info(f"Management dashboard summary: {dashboard_summary}")
     return {"management_dashboard": dashboard_summary}
 
+def generate_analysis_summary(state: FeedbackState):
+    logging.info("Generating analysis summary")
+    with db_pool.connection() as conn:
+        with conn.cursor() as cur:
+            # Get sentiment counts
+            cur.execute("""
+                SELECT sentiment, COUNT(*) 
+                FROM feedback_analysis 
+                GROUP BY sentiment
+            """)
+            sentiment_counts = dict(cur.fetchall())
+
+            # Get top categories
+            cur.execute("""
+                SELECT category, COUNT(*) 
+                FROM feedback_analysis 
+                GROUP BY category 
+                ORDER BY COUNT(*) DESC 
+                LIMIT 3
+            """)
+            top_categories = dict(cur.fetchall())
+
+            # Get top trends
+            cur.execute("""
+                SELECT trend_analysis, COUNT(*) 
+                FROM feedback_analysis 
+                GROUP BY trend_analysis 
+                ORDER BY COUNT(*) DESC 
+                LIMIT 3
+            """)
+            top_trends = dict(cur.fetchall())
+
+    analysis_summary = {
+        "sentiment_distribution": sentiment_counts,
+        "top_categories": top_categories,
+        "top_trends": top_trends,
+        "total_feedback_processed": sum(sentiment_counts.values()),
+        "last_updated": datetime.now().isoformat()
+    }
+
+    logging.info(f"Analysis summary generated: {analysis_summary}")
+    return {"analysis_summary": analysis_summary}
+
 # Define the graph workflow
 workflow = StateGraph(FeedbackState)
 
@@ -202,6 +268,7 @@ workflow.add_node("faq_update", faq_update_action)
 workflow.add_node("update_database", update_database)
 workflow.add_node("trend_analysis_node", trend_analysis)
 workflow.add_node("update_dashboard", update_management_dashboard)
+workflow.add_node("generate_summary", generate_analysis_summary)
 
 # Add edges to the graph
 workflow.add_edge(START, "categorization")
@@ -235,7 +302,11 @@ workflow.add_edge("product_development", "update_database")
 workflow.add_edge("faq_update", "update_database")
 workflow.add_edge("update_database", "trend_analysis_node")
 workflow.add_edge("trend_analysis_node", "update_dashboard")
-workflow.add_edge("update_dashboard", END)
+workflow.add_edge("update_dashboard", "generate_summary")
+
+workflow.add_edge("generate_summary", END)
+
+
 
 # Compile the graph
 graph = workflow.compile()

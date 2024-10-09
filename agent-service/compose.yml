@@ -9,7 +9,32 @@ services:
       - .:/code
     ports:
       - "8000:8000"
+    depends_on:
+      - postgres_db
+    networks:
+      - my_network
+
+  postgres_db:
+    image: postgres:latest
+    restart: always
+    container_name: postgres_db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - my_network
 
 volumes:
   agent-service:
     driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  my_network:
+    driver: bridge

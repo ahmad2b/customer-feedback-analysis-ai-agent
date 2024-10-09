@@ -4,7 +4,6 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { CodeBlock } from "@/components/ui/codeblock";
-import { IconUser } from "@/components/ui/icons";
 import { useStreamableText } from "@/lib/hooks/use-streamable-text";
 import { cn } from "@/lib/utils";
 import { StreamableValue } from "ai/rsc";
@@ -19,10 +18,10 @@ import { spinner } from "./spinner";
 export function UserMessage({ children }: { children: React.ReactNode }) {
 	return (
 		<div className="group relative flex items-start md:-ml-12">
-			<div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
+			{/* <div className="bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm">
 				<IconUser />
-			</div>
-			<div className="ml-4 flex-1 space-y-2 overflow-hidden pl-2">
+			</div> */}
+			<div className="ml-4 flex-1 space-y-2 overflow-hidden pl-2 text-2xl md:text-3xl text-[#323E59] font-urban font-medium">
 				{children}
 			</div>
 		</div>
@@ -102,15 +101,15 @@ export function BotCard({
 }) {
 	return (
 		<div className="group relative flex items-start md:-ml-12">
-			<div
+			{/* <div
 				className={cn(
 					"bg-background flex size-[25px] shrink-0 select-none items-center justify-center rounded-lg border shadow-sm",
 					!showAvatar && "invisible"
 				)}
 			>
 				<BotIcon className="size-6 p-0.5" />
-			</div>
-			<div className="ml-4 flex-1 pl-2">{children}</div>
+			</div> */}
+			<div className="ml-4 flex-1 pl-2 font-poppins">{children}</div>
 		</div>
 	);
 }
