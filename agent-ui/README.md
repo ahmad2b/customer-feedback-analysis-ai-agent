@@ -1,40 +1,55 @@
-# Generative UI with React Server Components and Vercel AI SDK
+# Agent UI
 
-This example demonstrates how to use the [Vercel AI SDK](https://sdk.vercel.ai/docs) with [Next.js](https://nextjs.org/) and the `streamUI` function to create generative user interfaces by streaming React Server Components to the client.
+This project is the frontend component of the Customer Feedback Analysis AI Agent. It is built using Next.js and integrates with the Vercel AI SDK to create generative user interfaces by streaming React Server Components to the client.
 
-## Deploy your own
+## Features
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-preview-rsc-genui&env=OPENAI_API_KEY&envDescription=API%20keys%20needed%20for%20application&envLink=platform.openai.com)
+- Generative UI with React Server Components
+- Integration with Vercel AI SDK
+- Tailwind CSS for styling
+- TypeScript support
 
-## How to use
+## Getting Started
 
-Run [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+### Prerequisites
 
-```bash
-npx create-next-app --example https://github.com/vercel-labs/ai-sdk-preview-rsc-genui ai-sdk-preview-rsc-genui-example
-```
+- Node.js
+- npm, Yarn, or pnpm
+- API keys for AI providers (e.g., OpenAI)
 
-```bash
-yarn create next-app --example https://github.com/vercel-labs/ai-sdk-preview-rsc-genui ai-sdk-preview-rsc-genui-example
-```
+### Installation
 
-```bash
-pnpm create next-app --example https://github.com/vercel-labs/ai-sdk-preview-rsc-genui ai-sdk-preview-rsc-genui-example
-```
+1. Clone the repository:
 
-To run the example locally you need to:
+   ```bash
+   git clone https://github.com/ahmad2b/customer-feedback-analysis-ai-agent.git
+   cd agent-ui
+   ```
 
-1. Sign up for accounts with the AI providers you want to use (e.g., OpenAI, Anthropic).
-2. Obtain API keys for each provider.
-3. Set the required environment variables as shown in the `.env.example` file, but in a new file called `.env`.
-4. `npm install` to install the required dependencies.
-5. `npm run dev` to launch the development server.
+2. Install the dependencies:
 
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
 
-## Learn More
+3. Create a `.env` file based on the `.env.example` file and add your API keys:
 
-To learn more about Vercel AI SDK or Next.js take a look at the following resources:
+   ```bash
+   cp .env.example .env
+   ```
 
-- [Vercel AI SDK docs](https://sdk.vercel.ai/docs)
-- [Vercel AI Playground](https://play.vercel.ai)
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+4. Run the development server:
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   ```
+
+5. Open http://localhost:3000 with your browser to see the result.
