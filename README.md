@@ -1,5 +1,11 @@
 # Custom Feedback Analysis AI Agent
 
+### Agent Workflow
+
+![agent workflow](agent-service/app/graph_image.png)
+
+### Agent in Action
+
 ![home](image-1.png)
 ![feedback analysis](image.png)
 
