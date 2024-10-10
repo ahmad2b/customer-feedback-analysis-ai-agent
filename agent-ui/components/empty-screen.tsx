@@ -13,10 +13,10 @@ export function EmptyScreen() {
 				<Separator className="my-4" />
 
 				<p className="text-center font-poppins text-lg text-[#323e59]">
-					Customer Feedback Analysis AI Agent for reducing staff hours, boosting
-					efficiency, faster response times, improved retention, actionable
-					insights for product and strategy, and testing system with a data
-					subset to see results fast.
+					Customer Feedback Analysis AI Agent is for reducing staff hours,
+					boosting efficiency, faster response times, improved retention,
+					actionable insights for product and strategy, and testing system with
+					a data subset to see results fast.
 				</p>
 
 				<Separator className="my-4" />

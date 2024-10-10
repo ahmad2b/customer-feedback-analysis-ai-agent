@@ -12,7 +12,8 @@ const sentimentColors = {
 
 export const AnalysisCard = ({ analysis }: { analysis: FeedbackAnalysis }) => {
 	const sentimentColor =
-		sentimentColors[analysis.sentiment as keyof typeof sentimentColors] ||
+		(analysis?.sentiment &&
+			sentimentColors[analysis.sentiment as keyof typeof sentimentColors]) ||
 		sentimentColors.Neutral;
 	return (
 		<Card

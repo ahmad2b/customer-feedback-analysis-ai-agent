@@ -1,24 +1,18 @@
 from contextlib import asynccontextmanager
 import warnings
 from dotenv import load_dotenv
-import os
 
 from fastapi import FastAPI
 from langchain_core._api import LangChainBetaWarning
 from langserve import add_routes
 
 from app.agent import graph as agent_graph
-
-from psycopg_pool import ConnectionPool
+from app.db import db_pool
 
 load_dotenv()
 
 warnings.filterwarnings("ignore", category=LangChainBetaWarning)
 
-
-
-DB_URI = os.getenv("DB_URI")
-db_pool = ConnectionPool(DB_URI)
 
 def init_db():
     with db_pool.connection() as conn:

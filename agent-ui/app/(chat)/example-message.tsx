@@ -26,7 +26,7 @@ export const ExampleMessage = ({ action, index }: ExampleMessageProps) => {
 		>
 			<Button
 				onClick={async () => {
-					setMessages((messages) => [
+					setMessages((messages: any) => [
 						...messages,
 						{
 							id: Date.now(),
@@ -35,7 +35,7 @@ export const ExampleMessage = ({ action, index }: ExampleMessageProps) => {
 						},
 					]);
 					const response: ReactNode = await sendMessage(action.action);
-					setMessages((messages) => [...messages, response]);
+					setMessages((messages: any) => [...messages, response]);
 				}}
 				variant="outline"
 				className="w-full text-left justify-start h-auto"

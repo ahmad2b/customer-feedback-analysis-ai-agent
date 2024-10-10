@@ -1,5 +1,5 @@
+import { BotCard, SpinnerMessage } from "@/components/chat/message";
 import { FeedbackAgentMessage } from "@/components/feedback-agent-msg";
-import { BotCard, SpinnerMessage } from "@/components/stocks/message";
 import { FeedbackAnalysis, FeedbackAnalytics } from "@/lib/types";
 import { generateId } from "ai";
 import { createAI, createStreamableUI, getMutableAIState } from "ai/rsc";

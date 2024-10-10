@@ -1,13 +1,13 @@
 "use client";
 
+import { UserMessage } from "@/components/chat/message";
 import { EmptyScreen } from "@/components/empty-screen";
-import { UserMessage } from "@/components/stocks/message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useScrollToBottom } from "@/components/use-scroll-to-bottom";
 import { useActions, useUIState } from "ai/rsc";
-import { Send } from "lucide-react";
+import { PlusCircleIcon, Send } from "lucide-react";
 import { ReactNode, useRef, useState } from "react";
 import { UIState } from "./actions";
 
@@ -78,6 +78,12 @@ export default function FeedbackChat() {
 						onSubmit={handleSubmit}
 						className="flex space-x-2 mb-4 bg-[#f4f4f8] rounded-full p-4 shadow-sm shadow-[#9ba5b7]"
 					>
+						<Button
+							size={"icon"}
+							className="rounded-full bg-white border-gray-300   focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 hover:bg-[#0058dd]/20"
+						>
+							<PlusCircleIcon className="size-5 text-[#0058dd] " />
+						</Button>
 						<Input
 							ref={inputRef}
 							className="flex-1 rounded-full bg-white border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-[#323E59] font-poppins"
