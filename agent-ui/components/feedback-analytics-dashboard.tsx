@@ -5,29 +5,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FeedbackAnalytics } from "@/lib/types";
 import { BarChart2, Frown, RefreshCw, Smile, TrendingUp } from "lucide-react";
-import { useState } from "react";
 
-const AnimatedNumber = ({ value }: { value: number }) => {
-	const [displayValue, setDisplayValue] = useState(0);
+// const AnimatedNumber = ({ value }: { value: number }) => {
+// 	const [displayValue, setDisplayValue] = useState(0);
 
-	useState(() => {
-		let start = 0;
-		const end = value;
-		const duration = 1000;
-		const increment = end / (duration / 16);
-		const timer = setInterval(() => {
-			start += increment;
-			setDisplayValue(Math.floor(start));
-			if (start >= end) {
-				clearInterval(timer);
-				setDisplayValue(end);
-			}
-		}, 16);
-		return () => clearInterval(timer);
-	}, [value]);
+// 	useState(() => {
+// 		let start = 0;
+// 		const end = value;
+// 		const duration = 1000;
+// 		const increment = end / (duration / 16);
+// 		const timer = setInterval(() => {
+// 			start += increment;
+// 			setDisplayValue(Math.floor(start));
+// 			if (start >= end) {
+// 				clearInterval(timer);
+// 				setDisplayValue(end);
+// 			}
+// 		}, 16);
+// 		return () => clearInterval(timer);
+// 	}, [value]);
 
-	return <span>{displayValue}</span>;
-};
+// 	return <span>{displayValue}</span>;
+// };
 
 const SentimentFace = ({
 	sentiment,
@@ -55,7 +54,8 @@ const SentimentFace = ({
 				/>
 			)}
 			<span className="text-2xl font-bold mt-2">
-				<AnimatedNumber value={count} />
+				{/* <AnimatedNumber value={count} /> */}
+				{count}
 			</span>
 			<span className="text-sm text-muted-foreground">{sentiment}</span>
 		</div>
@@ -110,7 +110,8 @@ export function FeedbackAnalyticsDashboard({
 					</div>
 					<div className="text-center mt-4">
 						<span className="text-3xl font-bold">
-							<AnimatedNumber value={data.total_feedback_processed} />
+							{/* <AnimatedNumber value={data.total_feedback_processed} /> */}
+							{data.total_feedback_processed}
 						</span>
 						<span className="text-sm text-muted-foreground ml-2">
 							Total Feedback
